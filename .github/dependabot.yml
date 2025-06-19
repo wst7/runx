@@ -2,14 +2,14 @@ version: 2
 updates:
   # Maintain dependencies for Cargo
   - package-ecosystem: cargo
-    directory: "/"
+    directory: "/src-tauri"
     schedule:
       interval: daily
     open-pull-requests-limit: 10
 
   # Maintain dependencies for GitHub Actions
   - package-ecosystem: github-actions
-    directory: "/"
+    directory: "/src-tauri"
     schedule:
       interval: daily
     open-pull-requests-limit: 10
