@@ -1,13 +1,14 @@
 {
   "name": "runx",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "release": "release-it"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
@@ -20,6 +21,8 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@release-it/bumper": "^7.0.5",
+    "@release-it/conventional-changelog": "^10.0.1",
     "@tauri-apps/cli": "^2",
     "@types/debounce-promise": "^3.1.9",
     "@types/react": "^19.1.8",
@@ -27,7 +30,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
-    "release-it": "^19.0.3",
+    "release-it": "^18.1.2",
     "tailwindcss": "^4.1.10",
     "typescript": "~5.8.3",
     "vite": "^6.0.3"
