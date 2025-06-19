@@ -10,46 +10,43 @@ enum ValueType {
   Array = "array",
 }
 
-export default function LogItem(props: {value: any}) {
-  return (
-    <span>
-      <LogValue value={props.value} />
-    </span>
-  )
+export default function LogItem(props: { value: any }) {
+  return <LogValue value={props.value} />;
 }
-const LogValue = ({
-  value,
-}: {
-  value: any;
-}) => {
-  const valueType = useMemo<ValueType>(() => getType(value) as ValueType, [value]);
+const LogValue = ({ value }: { value: any }) => {
+  const valueType = useMemo<ValueType>(
+    () => getType(value) as ValueType,
+    [value]
+  );
   if (valueType === ValueType.Null) {
     return (
-      <span className={`font-mono break-words text-[#F92672]`}>{"null "}</span>
+      <span className={`font-mono break-words text-[#F92672]`}>{"null"}</span>
     );
   }
   if (valueType === ValueType.Undefined) {
     return (
       <span className={`font-mono break-words text-[#F92672]`}>
-        {"undefined "}
+        {"undefined"}
       </span>
     );
   }
   if (valueType === ValueType.String) {
     return (
       <span className={`font-mono break-words text-[#E6DB74]`}>
-        {JSON.stringify(value)} {" "}
+        {JSON.stringify(value)}
       </span>
     );
   }
   if (valueType === ValueType.Number) {
     return (
-      <span className={`font-mono break-words text-[#AE81FF]`}>{value + " "}</span>
+      <span className={`font-mono break-words text-[#AE81FF]`}>{value}</span>
     );
   }
   if (valueType === ValueType.Boolean) {
     return (
-      <span className={`font-mono break-words text-[#A6E22E]`}>{value + " "} </span>
+      <span className={`font-mono break-words text-[#A6E22E]`}>
+        {`${value}`}{" "}
+      </span>
     );
   }
   if (valueType === ValueType.Object) {

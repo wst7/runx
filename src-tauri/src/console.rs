@@ -118,9 +118,7 @@ fn print_value(value: JsValue) -> String {
                 .join(", ");
             format!("{{{}}}", parts)
         }
-        #[cfg(feature = "chrono")]
         JsValue::Date(v) => v.to_string(),
-        #[cfg(feature = "bigint")]
         JsValue::BigInt(v) => v.to_string(),
         JsValue::__NonExhaustive => unreachable!(),
     }
@@ -131,7 +129,7 @@ impl ConsoleBackend for LogConsole {
         if values.is_empty() {
             return;
         }
-        println!("{:?}", values);
+
         add_log(values.clone());
         let log_level = match level {
             Level::Trace => log::Level::Trace,
@@ -170,6 +168,8 @@ pub fn js_value_to_serde(value: &JsValue) -> Value {
             }
             Value::Object(map)
         }
+        JsValue::Date(v) => Value::String(v.to_string()),
+        JsValue::BigInt(v) => Value::String(v.to_string()),
         JsValue::Undefined => Value::String("undefined".into()),
         _ => Value::String("[Unknown]".into()),
     }
