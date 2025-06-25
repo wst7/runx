@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "RunX",
-  "version": "0.2.0",
-  "identifier": "com.runx.app",
+  "version": "0.3.0",
+  "identifier": "com.runx.runner",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:1420",

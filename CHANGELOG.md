@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.0](https://github.com/wst7/runx/compare/v0.2.0...v0.3.0) (2025-06-25)
+
+### ✨ Features | 新功能
+
+* biginit and date undefined type support ([254f5e5](https://github.com/wst7/runx/commit/254f5e59809760310c2251e2694af98bf8de0e15))
+
 ## [0.2.0](https://github.com/wst7/runx/compare/v0.1.3...v0.2.0) (2025-06-19)
 
 ### ✨ Features | 新功能
