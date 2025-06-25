@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::fmt::{self, Display, Formatter};
 use std::sync::{Arc, Mutex};
 
@@ -7,84 +8,170 @@ use quick_js::console::ConsoleBackend;
 use quick_js::console::Level;
 use quick_js::JsValue;
 
-use serde::{Deserialize, Serialize};
-use serde_json::{Map, Number, Value};
+use serde::{Deserialize, Serialize, Serializer};
+use serde_json::Number;
+use serde::ser::SerializeStruct;
 
-// #[derive(Debug, Serialize, Deserialize, Clone)]
-// pub enum JavascriptType {
-//     Undefined,
-//     Null,
-//     Bool,
-//     Number,
-//     String,
-//     Array,
-//     Object,
-//     Date,
-//     BigInt,
-// }
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub enum JavascriptType {
+    Undefined,
+    Null,
+    Bool,
+    Number,
+    String,
+    Array,
+    Object,
+    Date,
+    BigInt,
+}
 
-// impl From<&JsValue> for JavascriptType {
-//     fn from(value: &JsValue) -> Self {
-//         match value {
-//             JsValue::Undefined => JavascriptType::Undefined,
-//             JsValue::Null => JavascriptType::Null,
-//             JsValue::Bool(_) => JavascriptType::Bool,
-//             JsValue::Int(_) => JavascriptType::Number,
-//             JsValue::Float(_) => JavascriptType::Number,
-//             JsValue::String(_) => JavascriptType::String,
-//             JsValue::Array(_) => JavascriptType::Array,
-//             JsValue::Object(_) => JavascriptType::Object,
-//             // #[cfg(feature = "chrono")]
-//             // JsValue::Date(_) => JavascriptType::Date,
-//             // #[cfg(feature = "bigint")]
-//             // JsValue::BigInt(_) => JavascriptType::BigInt,
-//             JsValue::__NonExhaustive => JavascriptType::Undefined,
-//         }
-//     }
-// }
+impl From<&JsValue> for JavascriptType {
+    fn from(value: &JsValue) -> Self {
+        match value {
+            JsValue::Undefined => JavascriptType::Undefined,
+            JsValue::Null => JavascriptType::Null,
+            JsValue::Bool(_) => JavascriptType::Bool,
+            JsValue::Int(_) => JavascriptType::Number,
+            JsValue::Float(_) => JavascriptType::Number,
+            JsValue::String(_) => JavascriptType::String,
+            JsValue::Array(_) => JavascriptType::Array,
+            JsValue::Object(_) => JavascriptType::Object,
+            JsValue::Date(_) => JavascriptType::Date,
+            JsValue::BigInt(_) => JavascriptType::BigInt,
+            JsValue::__NonExhaustive => JavascriptType::Undefined,
+        }
+    }
+}
 
-// impl Display for JavascriptType {
-//     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-//         match self {
-//             JavascriptType::Undefined => write!(f, "undefined"),
-//             JavascriptType::Null => write!(f, "null"),
-//             JavascriptType::Bool => write!(f, "bool"),
-//             JavascriptType::Number => write!(f, "number"),
-//             JavascriptType::String => write!(f, "string"),
-//             JavascriptType::Array => write!(f, "array"),
-//             JavascriptType::Object => write!(f, "object"),
-//             JavascriptType::Date => write!(f, "date"),
-//             JavascriptType::BigInt => write!(f, "bigint"),
-//         }
-//     }
-// }
+impl Display for JavascriptType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        match self {
+            JavascriptType::Undefined => write!(f, "undefined"),
+            JavascriptType::Null => write!(f, "null"),
+            JavascriptType::Bool => write!(f, "boolean"),
+            JavascriptType::Number => write!(f, "number"),
+            JavascriptType::String => write!(f, "string"),
+            JavascriptType::Array => write!(f, "array"),
+            JavascriptType::Object => write!(f, "object"),
+            JavascriptType::Date => write!(f, "date"),
+            JavascriptType::BigInt => write!(f, "bigint"),
+        }
+    }
+}
 
-// #[derive(Debug, Serialize, Deserialize, Clone)]
-// pub struct JavascriptValue {
-//     pub type_: JavascriptType,
-//     pub value: Value,
-// }
-// impl JavascriptValue {
-//     pub fn from(value: &JsValue) -> Self {
-//         Self {
-//             type_: JavascriptType::from(value),
-//             value: js_value_to_serde(value),
-//         }
-//     }
-// }
+#[derive(Debug, Deserialize, Clone)]
+pub struct JavascriptValueWithType {
+    pub type_: JavascriptType,
+    pub value: JavascriptValue,
+}
+impl Serialize for JavascriptValueWithType {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut state = serializer.serialize_struct("JavascriptValueWithType", 2)?;
+        state.serialize_field("type", &self.type_.to_string())?;
+        state.serialize_field("value", &self.value)?;
+        state.end()
+    }
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub enum JavascriptValue {
+    Null,
+    Bool(bool),
+    Number(Number),
+    String(String),
+    Array(Vec<JavascriptValueWithType>),
+    Object(HashMap<String, JavascriptValueWithType>),
+}
+impl Serialize for JavascriptValue {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match self {
+            JavascriptValue::Null => serializer.serialize_none(),
+            JavascriptValue::Bool(b) => serializer.serialize_bool(*b),
+            JavascriptValue::Number(n) => serializer.serialize_newtype_struct("Number", n),
+            JavascriptValue::String(s) => serializer.serialize_str(s),
+            JavascriptValue::Array(arr) => arr.serialize(serializer),
+            JavascriptValue::Object(obj) => obj.serialize(serializer),
+        }
+    }
+}
 
 lazy_static! {
-    static ref LOG_VALUES: Arc<Mutex<Vec<Vec<Value>>>> = Arc::new(Mutex::new(vec![]));
+    static ref LOG_VALUES: Arc<Mutex<Vec<Vec<JavascriptValueWithType>>>> =
+        Arc::new(Mutex::new(vec![]));
+}
+
+fn collect_value(value: JsValue) -> JavascriptValueWithType {
+    let type_ = JavascriptType::from(&value);
+    match value {
+        JsValue::Undefined => JavascriptValueWithType {
+            type_: type_,
+            value: JavascriptValue::String("undefined".to_string()),
+        },
+        JsValue::Null => JavascriptValueWithType {
+            type_: type_,
+            value: JavascriptValue::Null,
+        },
+        JsValue::Bool(b) => JavascriptValueWithType {
+            type_: type_,
+            value: JavascriptValue::Bool(b),
+        },
+        JsValue::Int(i) => JavascriptValueWithType {
+            type_: type_,
+            value: JavascriptValue::String(i.to_string()),
+        },
+        JsValue::Float(f) => JavascriptValueWithType {
+            type_: type_,
+            value: JavascriptValue::String(f.to_string()),
+        },
+        JsValue::String(s) => JavascriptValueWithType {
+            type_: type_,
+            value: JavascriptValue::String(s),
+        },
+        JsValue::Array(arr) => JavascriptValueWithType {
+            type_: type_,
+            value: JavascriptValue::Array(arr.into_iter().map(collect_value).collect::<Vec<_>>()),
+        },
+        JsValue::Object(obj) => {
+            let mut map = HashMap::<String, JavascriptValueWithType>::new();
+            for (key, value) in obj.into_iter() {
+                map.insert(key, collect_value(value));
+            }
+            JavascriptValueWithType {
+                type_: type_,
+                value: JavascriptValue::Object(map),
+            }
+        }
+        JsValue::Date(v) => JavascriptValueWithType {
+            type_: type_,
+            value: JavascriptValue::String(v.to_string()),
+        },
+        JsValue::BigInt(v) => JavascriptValueWithType {
+            type_: type_,
+            value: JavascriptValue::String(v.to_string()),
+        },
+        JsValue::__NonExhaustive => JavascriptValueWithType {
+            type_: type_,
+            value: JavascriptValue::Null,
+        },
+    }
 }
 
 pub fn add_log(values: Vec<JsValue>) {
-    LOG_VALUES
-        .lock()
-        .unwrap()
-        .push(values.into_iter().map(|v| js_value_to_serde(&v)).collect());
+    let log_values = values
+        .clone()
+        .into_iter()
+        .map(collect_value)
+        .collect::<Vec<_>>();
+    LOG_VALUES.lock().unwrap().push(log_values);
 }
 
-pub fn get_logs() -> Vec<Vec<Value>> {
+pub fn get_logs() -> Vec<Vec<JavascriptValueWithType>> {
     LOG_VALUES.lock().unwrap().clone()
 }
 
@@ -147,30 +234,5 @@ impl ConsoleBackend for LogConsole {
             .join(" ");
 
         log::log!(log_level, "{}", msg);
-    }
-}
-
-pub fn js_value_to_serde(value: &JsValue) -> Value {
-    match value {
-        JsValue::Null => Value::Null,
-        JsValue::Bool(b) => Value::Bool(*b),
-        JsValue::Int(i) => Value::Number(Number::from(*i)),
-        JsValue::Float(f) => Value::Number(Number::from_f64(*f).unwrap_or_else(|| Number::from(0))),
-        JsValue::String(s) => Value::String(s.clone()),
-        JsValue::Array(arr) => {
-            let converted: Vec<Value> = arr.iter().map(js_value_to_serde).collect();
-            Value::Array(converted)
-        }
-        JsValue::Object(obj) => {
-            let mut map = Map::new();
-            for (k, v) in obj.iter() {
-                map.insert(k.clone(), js_value_to_serde(v));
-            }
-            Value::Object(map)
-        }
-        JsValue::Date(v) => Value::String(v.to_string()),
-        JsValue::BigInt(v) => Value::String(v.to_string()),
-        JsValue::Undefined => Value::String("undefined".into()),
-        _ => Value::String("[Unknown]".into()),
     }
 }

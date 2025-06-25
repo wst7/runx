@@ -5,9 +5,14 @@ import "./App.css";
 import debounce from "debounce-promise";
 import Output from "./components/Output";
 
+import { getCurrentWindow } from '@tauri-apps/api/window';
+import { useMount } from "ahooks";
+import { LogOutput, LogOutputValueType } from "./LogType";
+
+
 const DefaultCode = `
 
-const test = 'test&123';
+const test: string = 'test&123';
 console.log(test);
 const list = [
   { name: 1, age: 18 },
@@ -19,10 +24,27 @@ console.log(list);
 console.log(1, '3', undefined, true, false)
 console.log([1, '3', undefined, true, false, null])
 
+class Person {
+  name: string;
+  age: number;
+  constructor(name: string, age: number) {
+    this.name = name;
+    this.age = age;
+  }
+}
+class Student extends Person {
+  school: string;
+  constructor(name: string, age: number, school: string) {
+    super(name, age);
+    this.school = school;
+  }
+} 
+console.log(new Student('John', 20, 'XYZ School'));
+
 `;
 
 function App() {
-  const [output, setOutput] = useState<any[]>([]);
+  const [output, setOutput] = useState<LogOutput[][]>([]);
   const [code, setCode] = useState<string | undefined>(DefaultCode);
   const [theme, setTheme] = useState<string>("vs-dark");
 
@@ -35,11 +57,11 @@ function App() {
       try {
         const res = await invoke<any[]>("run_code_with_type", {
           code: value,
-          language: "javascript",
+          language: "typescript",
         });
         setOutput(res);
-      } catch (e) {
-        setOutput([[e]]);
+      } catch (error) {
+        setOutput([[{ type: LogOutputValueType.String, value: error as string }]]);
       }
     }, 500),
     []
@@ -50,12 +72,16 @@ function App() {
     runCode(value);
   };
 
+  useMount(() => {
+    getCurrentWindow().setTitleBarStyle("visible");
+  });
+
   return (
     <main className="flex flex-row h-screen w-screen bg-[#1e1e1e]">
       <Editor
         height="100vh"
         width="50%"
-        defaultLanguage="javascript"
+        defaultLanguage="typescript"
         theme={theme}
         value={code}
         onChange={handleEditorChange}

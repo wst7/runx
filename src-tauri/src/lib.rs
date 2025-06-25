@@ -2,11 +2,7 @@ mod console;
 mod engine;
 mod language;
 
-use crate::{
-    engine::Engine,
-    language::Language,
-};
-use serde_json::Value;
+use crate::{console::JavascriptValueWithType, engine::Engine, language::Language};
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -14,9 +10,12 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-fn run_code_with_type(code: &str, language: &str) -> Result<Vec<Vec<Value>>, String> {
+async fn run_code_with_type(
+    code: &str,
+    language: &str,
+) -> Result<Vec<Vec<JavascriptValueWithType>>, String> {
     let mut engine = Engine::new(Language::from(language));
-    engine.run(code)
+    engine.run(code).await
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

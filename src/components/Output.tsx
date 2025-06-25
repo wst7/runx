@@ -1,9 +1,10 @@
-import LogRow, { LogRowType } from "./LogRow";
+import { LogOutput } from "../LogType";
+import LogRow from "./LogRow";
 
 
 
 
-export default function Output(props: { logs: LogRowType[] }) {
+export default function Output(props: { logs: LogOutput[][] }) {
   const { logs } = props;
   return (
     <div className="flex flex-col gap-y-4">

@@ -335,9 +335,9 @@ dependencies = [
 
 [[package]]
 name = "bumpalo"
-version = "3.18.1"
+version = "3.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "793db76d6187cd04dff33004d8e6c9cc4e05cd330500379d2394209271b4aeee"
+checksum = "1628fb46dfa0b37568d12e5edd512553eccf6a22a78e8bde00bb4aed84d5bdbf"
 
 [[package]]
 name = "bytemuck"
@@ -900,6 +900,17 @@ checksum = "cea14ef9355e3beab063703aa9dab15afd25f0667c341310c1e5274bb1d0da18"
 dependencies = [
  "libc",
  "windows-sys 0.59.0",
+]
+
+[[package]]
+name = "esbuild-rs"
+version = "0.13.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "516a2353dabd00559c2f874993ad4fce114beefb27c2482643e2888888d99b93"
+dependencies = [
+ "lazy_static",
+ "libc",
+ "memorymodule-rs",
 ]
 
 [[package]]
@@ -1998,6 +2009,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "memorymodule-rs"
+version = "0.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0c4ead5a227d30610a2dee54d4121a79184072f94865506420e535a778b8a681"
+dependencies = [
+ "cc",
+ "libc",
+]
+
+[[package]]
 name = "mime"
 version = "0.3.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3013,6 +3034,7 @@ dependencies = [
 name = "runx"
 version = "0.1.0"
 dependencies = [
+ "esbuild-rs",
  "lazy_static",
  "log",
  "quick-js",
@@ -3929,9 +3951,9 @@ dependencies = [
 
 [[package]]
 name = "tokio"
-version = "1.41.1"
+version = "1.45.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "22cfb5bee7a6a52939ca9224d6ac897bb669134078daa8735560897f69de4d33"
+checksum = "75ef51a33ef1da925cea3e4eb122833cb377c61439ca401b770f54902b806779"
 dependencies = [
  "backtrace",
  "bytes",

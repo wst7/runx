@@ -1,8 +1,9 @@
+import { LogOutput } from "../LogType";
 import LogItem from "./LogItem";
 
-export type LogRowType = any[];
 
-export default function LogRow(props: { value: LogRowType }) {
+
+export default function LogRow(props: { value: LogOutput[] }) {
   const { value } = props;
   return (
     <div className="flex flex-row gap-x-4 flex-wrap">
