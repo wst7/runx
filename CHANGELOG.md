@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.3](https://github.com/wst7/runx/compare/v0.4.2...v0.4.3) (2025-06-26)
+
+### 🐛 Bug Fixes | Bug 修复
+
+* windows not support ([68bfbf7](https://github.com/wst7/runx/commit/68bfbf795a506aeba9b8ec3e8344f01aba58b59d))
+
 ## [0.4.2](https://github.com/wst7/runx/compare/v0.4.1...v0.4.2) (2025-06-26)
 
 ### 🐛 Bug Fixes | Bug 修复
