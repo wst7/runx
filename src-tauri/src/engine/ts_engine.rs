@@ -1,17 +1,28 @@
+use std::sync::{Arc, Mutex};
+
 use crate::console::{add_log, clear_logs, get_logs, JavascriptValueWithType, LogConsole};
 use quickjs_rs::{Context, ExecutionError, JsValue};
 
 use swc_common::{
     comments::SingleThreadedComments,
-    errors::{ColorConfig, Handler},
+    errors::{Emitter, DiagnosticBuilder, Handler},
     sync::Lrc,
     FileName, Globals, Mark, SourceMap, GLOBALS,
 };
-use swc_ecma_codegen::to_code_default;
+use swc_ecma_codegen::{to_code_default };
 use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsSyntax};
 use swc_ecma_transforms_base::{fixer::fixer, hygiene::hygiene, resolver};
 use swc_ecma_transforms_typescript::strip;
 
+
+#[derive(Debug, Clone, Default)]
+pub struct ErrorBuffer(Arc<Mutex<Vec<swc_common::errors::Diagnostic>>>);
+
+impl Emitter for ErrorBuffer {
+    fn emit(&mut self, db: &mut DiagnosticBuilder) {
+        self.0.lock().unwrap().push((**db).clone());
+    }
+}
 pub struct TsEngine;
 
 impl TsEngine {
@@ -83,7 +94,8 @@ impl TsEngine {
     /// Compile TypeScript code with swc
     async fn compile_ts_with_swc(&self, ts_code: &str) -> Result<String, String> {
         let cm: Lrc<SourceMap> = Default::default();
-        let handler = Handler::with_tty_emitter(ColorConfig::Auto, true, false, Some(cm.clone()));
+        let error_buffer = ErrorBuffer::default();
+        let handler = Handler::with_emitter(false, false, Box::new(error_buffer.clone()));
         let fm = cm.new_source_file(
             Lrc::new(FileName::Custom("internal.ts".into())),
             ts_code.to_string(),
@@ -100,10 +112,28 @@ impl TsEngine {
         );
         let mut parser = Parser::new_from(lexer);
 
-        let module = parser
-            .parse_program()
-            .map_err(|e| e.into_diagnostic(&handler).emit())
-            .expect("failed to parse module.");
+        let module = match parser.parse_program() {
+            Ok(module) => module,
+            Err(err) => {
+                err.clone().into_diagnostic(&handler).emit();
+
+                // return Err(format!("{:?}", err));
+                // get error from error_buffer
+                let errors = error_buffer.0.lock().unwrap().clone();
+                return Err(format!(
+                    "{}",
+                    errors
+                        .iter()
+                        .map(|diagnostic| {
+                            println!("{:?}", diagnostic);
+                            diagnostic.message()
+                        })
+                        .collect::<Vec<_>>()
+                        .join("\n")
+                ));
+            }
+        };
+        
         let globals = Globals::default();
         GLOBALS.set(&globals, || {
             let unresolved_mark = Mark::new();
