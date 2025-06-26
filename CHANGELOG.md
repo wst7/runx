@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.4](https://github.com/wst7/runx/compare/v0.4.3...v0.4.4) (2025-06-26)
+
+### 🐛 Bug Fixes | Bug 修复
+
+* collect complite ts errors ([bdbffad](https://github.com/wst7/runx/commit/bdbffad3d53b798e1414f86ad758b77d920eae33))
+
 ## [0.4.3](https://github.com/wst7/runx/compare/v0.4.2...v0.4.3) (2025-06-26)
 
 ### 🐛 Bug Fixes | Bug 修复
