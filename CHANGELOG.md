@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.2](https://github.com/wst7/runx/compare/v0.4.1...v0.4.2) (2025-06-26)
+
+### 🐛 Bug Fixes | Bug 修复
+
+* use quickjs_rs ([50eb494](https://github.com/wst7/runx/commit/50eb494244986a7bdf5ae54a9a41befcf2f9c83c))
+
 ## [0.4.1](https://github.com/wst7/runx/compare/v0.4.0...v0.4.1) (2025-06-26)
 
 ### 🐛 Bug Fixes | Bug 修复
