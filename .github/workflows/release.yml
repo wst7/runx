@@ -20,9 +20,9 @@ jobs:
           - platform: 'macos-latest' # for Intel based macs.
             args: '--target x86_64-apple-darwin'
           - platform: 'ubuntu-22.04' # for Tauri v1 you could replace this with ubuntu-20.04.
-            args: ''
+            args: '--target x86_64-unknown-linux-gnu'
           - platform: 'windows-latest'
-            args: ''
+            args: '--target x86_64-pc-windows-gnu'
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -52,12 +52,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-
-      # 安装 Go（关键）
-      - uses: actions/setup-go@v4
-        with:
-          go-version: '1.20'
-
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
