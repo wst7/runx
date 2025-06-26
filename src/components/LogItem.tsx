@@ -62,10 +62,11 @@ const LogValue = ({ value }: { value: LogOutput }) => {
         </span>
       );
     case LogOutputValueType.Object:
+      console.log(Object.keys(value.value))
       return (
         <span className="font-mono break-words">
           <span>{`{ `}</span>
-          {Object.keys(value.value).map((key, i) => {
+          {Object.keys(value.value).sort().map((key, i) => {
             return (
               <span key={key}>
                 <span className="font-mono break-words text-[#78DCE8]">

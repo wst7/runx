@@ -1,8 +1,16 @@
 use crate::console::{add_log, clear_logs, get_logs, JavascriptValueWithType, LogConsole};
-use esbuild_rs::{transform, Loader, TransformOptionsBuilder};
-use std::sync::Arc;
-
 use quick_js::{Context, ExecutionError, JsValue};
+
+use swc_common::{
+    comments::SingleThreadedComments,
+    errors::{ColorConfig, Handler},
+    sync::Lrc,
+    FileName, Globals, Mark, SourceMap, GLOBALS,
+};
+use swc_ecma_codegen::to_code_default;
+use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsSyntax};
+use swc_ecma_transforms_base::{fixer::fixer, hygiene::hygiene, resolver};
+use swc_ecma_transforms_typescript::strip;
 
 pub struct TsEngine;
 
@@ -11,7 +19,7 @@ impl TsEngine {
         Self {}
     }
     pub async fn run(&self, code: &str) -> Result<Vec<Vec<JavascriptValueWithType>>, String> {
-        let js_code = self.compile_ts(code).await?;
+        let js_code = self.compile_ts_with_swc(code).await?;
         self.run_js(&js_code).await
     }
 
@@ -47,26 +55,77 @@ impl TsEngine {
         let result = get_logs();
         Ok(result)
     }
-    async fn compile_ts(&self, ts_code: &str) -> Result<String, String> {
-        let src = Arc::new(ts_code.as_bytes().to_vec());
 
-        let mut options_builder = TransformOptionsBuilder::new();
-        options_builder.loader = Loader::TS;
-        let options = options_builder.build();
+    /// Compile TypeScript code with esbuild
+    // async fn compile_ts_with_esbuild(&self, ts_code: &str) -> Result<String, String> {
+    //     let src = Arc::new(ts_code.as_bytes().to_vec());
 
-        let result = transform(src, options).await;
-        let err = result.errors.as_slice();
-        if !err.is_empty() {
-            let error_messages: String = err
-                .iter()
-                .map(|e| e.to_string())
-                .collect::<Vec<_>>()
-                .join("\n");
-            println!("TypeScript compilation errors: {:?}", error_messages);
-            return Err(error_messages);
-        }
+    //     let mut options_builder = TransformOptionsBuilder::new();
+    //     options_builder.loader = Loader::TS;
+    //     let options = options_builder.build();
 
-        let js_code = result.code.to_string();
-        Ok(js_code)
+    //     let result = transform(src, options).await;
+    //     let err = result.errors.as_slice();
+    //     if !err.is_empty() {
+    //         let error_messages: String = err
+    //             .iter()
+    //             .map(|e| e.to_string())
+    //             .collect::<Vec<_>>()
+    //             .join("\n");
+    //         println!("TypeScript compilation errors: {:?}", error_messages);
+    //         return Err(error_messages);
+    //     }
+
+    //     let js_code = result.code.to_string();
+    //     Ok(js_code)
+    // }
+
+    /// Compile TypeScript code with swc
+    async fn compile_ts_with_swc(&self, ts_code: &str) -> Result<String, String> {
+        let cm: Lrc<SourceMap> = Default::default();
+        let handler = Handler::with_tty_emitter(ColorConfig::Auto, true, false, Some(cm.clone()));
+        let fm = cm.new_source_file(
+            Lrc::new(FileName::Custom("internal.ts".into())),
+            ts_code.to_string(),
+        );
+        let comments = SingleThreadedComments::default();
+        let lexer = Lexer::new(
+            Syntax::Typescript(TsSyntax {
+                tsx: true,
+                ..Default::default()
+            }),
+            Default::default(),
+            StringInput::from(&*fm),
+            Some(&comments),
+        );
+        let mut parser = Parser::new_from(lexer);
+
+        let module = parser
+            .parse_program()
+            .map_err(|e| e.into_diagnostic(&handler).emit())
+            .expect("failed to parse module.");
+        let globals = Globals::default();
+        GLOBALS.set(&globals, || {
+            let unresolved_mark = Mark::new();
+            let top_level_mark = Mark::new();
+
+            // Optionally transforms decorators here before the resolver pass
+            // as it might produce runtime declarations.
+
+            // Conduct identifier scope analysis
+            let module = module.apply(resolver(unresolved_mark, top_level_mark, true));
+
+            // Remove typescript types
+            let module = module.apply(strip(unresolved_mark, top_level_mark));
+
+            // Fix up any identifiers with the same name, but different contexts
+            let module = module.apply(hygiene());
+
+            // Ensure that we have enough parenthesis.
+            let program = module.apply(fixer(Some(&comments)));
+
+            let code = to_code_default(cm, Some(&comments), &program);
+            return Ok(code);
+        })
     }
 }
