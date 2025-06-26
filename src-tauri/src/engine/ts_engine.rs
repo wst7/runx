@@ -1,5 +1,5 @@
 use crate::console::{add_log, clear_logs, get_logs, JavascriptValueWithType, LogConsole};
-use quick_js::{Context, ExecutionError, JsValue};
+use quickjs_rs::{Context, ExecutionError, JsValue};
 
 use swc_common::{
     comments::SingleThreadedComments,

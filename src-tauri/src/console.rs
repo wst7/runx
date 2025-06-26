@@ -4,9 +4,9 @@ use std::sync::{Arc, Mutex};
 
 use lazy_static::lazy_static;
 use log;
-use quick_js::console::ConsoleBackend;
-use quick_js::console::Level;
-use quick_js::JsValue;
+use quickjs_rs::console::ConsoleBackend;
+use quickjs_rs::console::Level;
+use quickjs_rs::JsValue;
 
 use serde::{Deserialize, Serialize, Serializer};
 use serde_json::Number;

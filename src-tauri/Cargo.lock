@@ -2109,10 +2109,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "libquickjs-dtp-sys"
-version = "0.10.0"
+name = "libquickjs-sys-latest"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b869d7bd9cfc01d9ee1b29a7556990897268da33765d750be3f51379e850fb95"
+checksum = "4749bba81fcbfe90dd6459d57ff237e59a4e4cfedfa7e8f721d3bec47e892b8c"
 dependencies = [
  "cc",
  "copy_dir",
@@ -2310,6 +2310,17 @@ name = "nodrop"
 version = "0.1.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "72ef4a56884ca558e5ddb05a1d1e7e1bfd9a68d9ed024c21704cc98872dae1bb"
+
+[[package]]
+name = "num-bigint"
+version = "0.2.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "090c7f9998ee0ff65aa5b723e4009f7b217707f1fb5ea551329cc4d6231fb304"
+dependencies = [
+ "autocfg",
+ "num-integer",
+ "num-traits",
+]
 
 [[package]]
 name = "num-bigint"
@@ -3056,26 +3067,25 @@ dependencies = [
 ]
 
 [[package]]
-name = "quick-js-dtp"
-version = "0.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "29d07297b897136123d4bb9c63249b587aafbd1a74dcc7f86848c41e506655ab"
-dependencies = [
- "chrono",
- "libquickjs-dtp-sys",
- "log",
- "num-bigint",
- "num-traits",
- "once_cell",
-]
-
-[[package]]
 name = "quick-xml"
 version = "0.37.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "331e97a1af0bf59823e6eadffe373d7b27f485be8748f71471c662c1f269b7fb"
 dependencies = [
  "memchr",
+]
+
+[[package]]
+name = "quickjs-rs"
+version = "0.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bff8e10856bee4933e30f91e305003b8c34c70192f46ce017224315a22e9c6c4"
+dependencies = [
+ "chrono",
+ "libquickjs-sys-latest",
+ "log",
+ "num-bigint 0.2.6",
+ "num-traits",
 ]
 
 [[package]]
@@ -3296,7 +3306,7 @@ version = "0.1.0"
 dependencies = [
  "lazy_static",
  "log",
- "quick-js-dtp",
+ "quickjs-rs",
  "serde",
  "serde_json",
  "swc_common",
@@ -3850,7 +3860,7 @@ dependencies = [
  "either",
  "from_variant",
  "new_debug_unreachable",
- "num-bigint",
+ "num-bigint 0.4.6",
  "once_cell",
  "rustc-hash",
  "serde",
@@ -3899,7 +3909,7 @@ checksum = "f1ddc264ed13ae03aa30e1c89798502f9ddbe765a4ad695054add1074ffbc5cb"
 dependencies = [
  "bitflags 2.9.1",
  "is-macro",
- "num-bigint",
+ "num-bigint 0.4.6",
  "once_cell",
  "phf 0.11.3",
  "rustc-hash",
@@ -3920,7 +3930,7 @@ dependencies = [
  "ascii",
  "compact_str",
  "memchr",
- "num-bigint",
+ "num-bigint 0.4.6",
  "once_cell",
  "regex",
  "rustc-hash",
@@ -3959,7 +3969,7 @@ dependencies = [
  "cow-replace",
  "either",
  "new_debug_unreachable",
- "num-bigint",
+ "num-bigint 0.4.6",
  "num-traits",
  "phf 0.11.3",
  "rustc-hash",
@@ -3986,7 +3996,7 @@ dependencies = [
  "bitflags 2.9.1",
  "either",
  "new_debug_unreachable",
- "num-bigint",
+ "num-bigint 0.4.6",
  "num-traits",
  "phf 0.11.3",
  "rustc-hash",
@@ -4129,7 +4139,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7ad28e3449b376bfe1f2bde28bfcf305961ba23c1e205bedb03a7c108a1d1ff6"
 dependencies = [
  "new_debug_unreachable",
- "num-bigint",
+ "num-bigint 0.4.6",
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
