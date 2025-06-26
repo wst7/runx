@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.0](https://github.com/wst7/runx/compare/v0.3.3...v0.4.0) (2025-06-26)
+
+### ✨ Features | 新功能
+
+* comppile ts to js use swc ([89bb418](https://github.com/wst7/runx/commit/89bb418640ffb667febea1c8fc7ccc8f75a133c0))
+
 ## [0.3.3](https://github.com/wst7/runx/compare/v0.3.2...v0.3.3) (2025-06-25)
 
 ## [0.3.2](https://github.com/wst7/runx/compare/v0.3.1...v0.3.2) (2025-06-25)
