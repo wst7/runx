@@ -12,9 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "RunX",
-        "width": 800,
-        "height": 600
+        "title": "RunX"
       }
     ],
     "security": {

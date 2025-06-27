@@ -6,6 +6,11 @@
   "permissions": [
     "core:default",
     "opener:default",
-    "core:window:allow-set-title-bar-style"
+    "core:window:allow-set-size",
+    "core:window:allow-set-position",
+    "core:webview:allow-create-webview-window",
+    "core:window:allow-set-focus",
+    "core:window:allow-show",
+    "core:window:allow-close"
   ]
 }
