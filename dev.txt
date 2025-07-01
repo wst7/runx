@@ -1,0 +1,2 @@
+new crates
+cargo new crates/xxx --lib
