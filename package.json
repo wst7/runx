@@ -9,6 +9,11 @@
     "desktop:tauri": "pnpm --filter @runx/desktop tauri",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "devDependencies": {
+    "@release-it/bumper": "^7.0.5",
+    "@release-it/conventional-changelog": "^10.0.1",
+    "release-it": "^18.1.2"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC"

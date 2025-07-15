@@ -1,10 +1,10 @@
-name: 'Release'
+name: "Release"
 
 on:
   push:
     tags:
-      - 'v*'
-      
+      - "v*"
+
   workflow_dispatch:
 
 jobs:
@@ -15,14 +15,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: 'macos-latest' # for Arm based macs (M1 and above).
-            args: '--target aarch64-apple-darwin'
-          - platform: 'macos-latest' # for Intel based macs.
-            args: '--target x86_64-apple-darwin'
-          - platform: 'ubuntu-22.04' # for Tauri v1 you could replace this with ubuntu-20.04.
-            args: '--target x86_64-unknown-linux-gnu'
-          # - platform: 'windows-latest'
-          #   args: '--target x86_64-pc-windows-gnu'
+          - platform: "macos-latest" # for Arm based macs (M1 and above).
+            args: "--target aarch64-apple-darwin"
+          - platform: "macos-latest" # for Intel based macs.
+            args: "--target x86_64-apple-darwin"
+          - platform: "ubuntu-22.04" # for Tauri v1 you could replace this with ubuntu-20.04.
+            args: "--target x86_64-unknown-linux-gnu"
+          - platform: "windows-latest"
+            args: "--target x86_64-pc-windows-gnu"
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -39,6 +39,15 @@ jobs:
           # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
+      - name: Install stable toolchain (windows)
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          target: x86_64-pc-windows-gnu
+          override: true
+        if: matrix.platform == 'windows-latest'
+
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04' # This must match the platform value defined above.
         run: |
@@ -46,6 +55,13 @@ jobs:
           sudo apt-get install -y libwebkit2gtk-4.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
         # webkitgtk 4.0 is for Tauri v1 - webkitgtk 4.1 is for Tauri v2.
         # You can remove the one that doesn't apply to your app to speed up the workflow a bit.
+
+      - name: Setup (windows)
+        run: |
+          $env:PATH = "C:\msys64\mingw64\bin;C:\msys64\usr\bin;$env:PATH"
+          echo "PATH=${env:PATH}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "CARGO_BUILD_TARGET=x86_64-pc-windows-gnu" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        if: matrix.os == 'windows-latest'
 
       - name: Install pnpm
         run: npm install -g pnpm
@@ -57,8 +73,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
-          releaseName: 'Runx v__VERSION__'
-          releaseBody: 'For a detailed list of changes, please refer to [CHANGELOG.md](./CHANGELOG.md).'
+          releaseName: "Runx v__VERSION__"
+          releaseBody: "For a detailed list of changes, please refer to [CHANGELOG.md](./CHANGELOG.md)."
           releaseDraft: false
           prerelease: true
           args: ${{ matrix.args }}
+          projectPath: ./apps/desktop
