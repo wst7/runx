@@ -3377,7 +3377,7 @@ dependencies = [
 
 [[package]]
 name = "runx"
-version = "0.5.0"
+version = "0.5.1"
 dependencies = [
  "runx_engine",
  "serde",
@@ -3389,7 +3389,7 @@ dependencies = [
 
 [[package]]
 name = "runx_engine"
-version = "0.5.0"
+version = "0.5.1"
 dependencies = [
  "lazy_static",
  "log",
@@ -3410,7 +3410,7 @@ dependencies = [
 
 [[package]]
 name = "runx_wasm_api"
-version = "0.5.0"
+version = "0.5.1"
 dependencies = [
  "runx_engine",
  "serde",

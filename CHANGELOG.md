@@ -1,5 +1,7 @@
 # Changelog
 
+## [0.5.1](https://github.com/wst7/runx/compare/v0.5.0...v0.5.1) (2025-07-15)
+
 ## [0.5.0](https://github.com/wst7/runx/compare/v0.4.4...v0.5.0) (2025-07-15)
 
 ### ✨ Features | 新功能
