@@ -1,6 +1,6 @@
 [package]
 name = "runx_wasm_api"
-version = "0.1.0"
+version = "0.5.0"
 edition = "2024"
 
 [lib]
@@ -10,7 +10,5 @@ crate-type = ["cdylib"]
 serde = "1.0.219"
 serde_json = "1.0.140"
 wasm-bindgen = "0.2.100"
-runx_engine = {path = "../engine"}
+runx_engine = { path = "../engine" }
 wasm-bindgen-futures = "0.4.50"
-
-

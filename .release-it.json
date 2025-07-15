@@ -16,7 +16,12 @@
       "in": "package.json",
       "out": [
         "package.json",
-        "src-tauri/tauri.conf.json"
+        "apps/desktop/package.json",
+        "apps/desktop/src-tauri/tauri.conf.json",
+        "apps/desktop/src-tauri/Cargo.toml",
+        "apps/web/package.json",
+        "crates/engine/Cargo.toml",
+        "crates/wasm_api/Cargo.toml"
       ]
     },
     "@release-it/conventional-changelog": {

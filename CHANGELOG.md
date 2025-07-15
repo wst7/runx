@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.5.0](https://github.com/wst7/runx/compare/v0.4.4...v0.5.0) (2025-07-15)
+
+### ✨ Features | 新功能
+
+* add setings window ([8626edc](https://github.com/wst7/runx/commit/8626edc4fd019eb3cd99ea7d2d4791d28c5cd2d5))
+* monorepo ([0aa7ec8](https://github.com/wst7/runx/commit/0aa7ec80bab930095931f5519873876661ca853a))
+* monorepo ([55adf7e](https://github.com/wst7/runx/commit/55adf7e39df38b3331ca4c21fb2ce7c99b3364e9))
+
+## [1.2.0](https://github.com/wst7/runx/compare/v0.4.4...v1.2.0) (2025-07-15)
+
+### ✨ Features | 新功能
+
+* add setings window ([8626edc](https://github.com/wst7/runx/commit/8626edc4fd019eb3cd99ea7d2d4791d28c5cd2d5))
+* monorepo ([0aa7ec8](https://github.com/wst7/runx/commit/0aa7ec80bab930095931f5519873876661ca853a))
+* monorepo ([55adf7e](https://github.com/wst7/runx/commit/55adf7e39df38b3331ca4c21fb2ce7c99b3364e9))
+
+## [1.1.0](https://github.com/wst7/runx/compare/v0.4.4...v1.1.0) (2025-07-15)
+
+### ✨ Features | 新功能
+
+* add setings window ([8626edc](https://github.com/wst7/runx/commit/8626edc4fd019eb3cd99ea7d2d4791d28c5cd2d5))
+* monorepo ([0aa7ec8](https://github.com/wst7/runx/commit/0aa7ec80bab930095931f5519873876661ca853a))
+* monorepo ([55adf7e](https://github.com/wst7/runx/commit/55adf7e39df38b3331ca4c21fb2ce7c99b3364e9))
+
 ## [0.4.4](https://github.com/wst7/runx/compare/v0.4.3...v0.4.4) (2025-06-26)
 
 ### 🐛 Bug Fixes | Bug 修复
